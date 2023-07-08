@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A3A284362A55D4A100A8B6C3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A3A284352A55D4A100A8B6C3 /* GoogleService-Info.plist */; };
+		A3117B082A598DF9000001B3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A3117B072A598DF8000001B3 /* GoogleService-Info.plist */; };
+		A3117B092A59947C000001B3 /* GoogleService-Info.plist in Sources */ = {isa = PBXBuildFile; fileRef = A3117B072A598DF8000001B3 /* GoogleService-Info.plist */; };
 		A3A284392A55D5D100A8B6C3 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = A3A284382A55D5D100A8B6C3 /* FirebaseFirestore */; };
 		A3A2843B2A5617DB00A8B6C3 /* Geohash.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3A2843A2A5617DB00A8B6C3 /* Geohash.swift */; };
 		A3FF4B9D2A54EBDC005DCE2C /* ThumbprintApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3FF4B9C2A54EBDC005DCE2C /* ThumbprintApp.swift */; };
@@ -17,7 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A3A284352A55D4A100A8B6C3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A3117B072A598DF8000001B3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "/Users/nicholascarducci/Desktop/ios/Thumbprint/Thumbprint/GoogleService-Info.plist"; sourceTree = "<absolute>"; };
 		A3A2843A2A5617DB00A8B6C3 /* Geohash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geohash.swift; sourceTree = "<group>"; };
 		A3FF4B992A54EBDC005DCE2C /* Thumbprint.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thumbprint.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3FF4B9C2A54EBDC005DCE2C /* ThumbprintApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbprintApp.swift; sourceTree = "<group>"; };
@@ -57,12 +58,12 @@
 		A3FF4B9B2A54EBDC005DCE2C /* Thumbprint */ = {
 			isa = PBXGroup;
 			children = (
-				A3A284352A55D4A100A8B6C3 /* GoogleService-Info.plist */,
 				A3FF4B9C2A54EBDC005DCE2C /* ThumbprintApp.swift */,
 				A3FF4B9E2A54EBDC005DCE2C /* ContentView.swift */,
 				A3FF4BA02A54EBDD005DCE2C /* Assets.xcassets */,
 				A3FF4BA22A54EBDD005DCE2C /* Preview Content */,
 				A3A2843A2A5617DB00A8B6C3 /* Geohash.swift */,
+				A3117B072A598DF8000001B3 /* GoogleService-Info.plist */,
 			);
 			path = Thumbprint;
 			sourceTree = "<group>";
@@ -141,7 +142,7 @@
 			files = (
 				A3FF4BA42A54EBDD005DCE2C /* Preview Assets.xcassets in Resources */,
 				A3FF4BA12A54EBDD005DCE2C /* Assets.xcassets in Resources */,
-				A3A284362A55D4A100A8B6C3 /* GoogleService-Info.plist in Resources */,
+				A3117B082A598DF9000001B3 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -152,6 +153,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A3117B092A59947C000001B3 /* GoogleService-Info.plist in Sources */,
 				A3A2843B2A5617DB00A8B6C3 /* Geohash.swift in Sources */,
 				A3FF4B9F2A54EBDC005DCE2C /* ContentView.swift in Sources */,
 				A3FF4B9D2A54EBDC005DCE2C /* ThumbprintApp.swift in Sources */,

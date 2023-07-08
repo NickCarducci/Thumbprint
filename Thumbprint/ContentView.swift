@@ -57,13 +57,13 @@ struct MapView: UIViewRepresentable {
         
         return mapView
     }
-    var latlng:Array<CLLocationDegrees>
+    var latlng:CLLocationCoordinate2D//Array<CLLocationDegrees>
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
         if let annotation = annotation {
             uiView.addAnnotation(annotation)
         }
-        let center = CLLocationCoordinate2D(latitude: latlng[0], longitude: latlng[1])
+        let center = latlng//CLLocationCoordinate2D(latitude: latlng[0], longitude: latlng[1])
         let span = MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
         let region = MKCoordinateRegion(center: center, span: span)
         mapView.setRegion(region, animated: true)
@@ -213,7 +213,8 @@ struct ContentView: View {
     @State var place: Place?
     @State var ticketmaster: Ticketmaster?
     
-    @State var latlng:Array<CLLocationDegrees> = [43,-74]
+    @State var latlng =//:Array<CLLocationDegrees> =
+    CLLocationCoordinate2D(latitude: 43, longitude: -74)
     
     fileprivate func performSearch(query: String){
         
@@ -251,12 +252,12 @@ struct ContentView: View {
                                     
                                     //place = try decoder.decode(Place.self, from: data)
                                     print(place)
-                                    latlng = [place.features[0].center[1], place.features[0].center[0]]
+                                    //latlng = [place.features[0].center[1], place.features[0].center[0]]
                                     //latlng = [place?.features[0].center[0] ?? -74, place?.features[0].center[1] ?? 43]
                                     print(latlng)
                                     Task {
                                         let consumerSecret = "iAkWSqAXXAFLtxiFJYQJeqYpWcZDVUbt"
-                                        let urllString = "https://app.ticketmaster.com/discovery/v2/events.json?geoPoint=\(Geohash.encode(latitude:latlng[0], longitude:latlng[1], length:9))&size=150&apikey=\(consumerSecret)"
+                                        let urllString = "https://app.ticketmaster.com/discovery/v2/events.json?geoPoint=\(Geohash.encode(latitude:place.features[0].center[1], longitude:place.features[0].center[0], length:9))&size=150&apikey=\(consumerSecret)"
                                         print("searching \(urllString)")
                                         let urll = URL(string: urllString)!
                                         let task = URLSession.shared.dataTask(with: urll) { dataa, response, error in
