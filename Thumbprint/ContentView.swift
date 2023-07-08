@@ -25,7 +25,7 @@ struct MapView: UIViewRepresentable {
         }
     }
     var currentCallout: UIView?
-    mutating func mapView(_ mapView: MKMapView,didSelect view: MKAnnotationView){
+    /*func mapView(_ mapView: MKMapView,didSelect view: MKAnnotationView){
         currentCallout?.removeFromSuperview()
         let customCallout = UIView()
         //customCallout.frame = .init(x: 0, y: 0, width: 100, height: 200)
@@ -37,7 +37,7 @@ struct MapView: UIViewRepresentable {
         customCallout.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         //customCallout.centerYAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         currentCallout = customCallout
-    }
+    }*/
     let mapView = MKMapView()
     
     
