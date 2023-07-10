@@ -8,6 +8,7 @@
 import SwiftUI
 import MapKit
 import Firebase
+import Geofirestore
 
 struct MapView: UIViewRepresentable {
     
@@ -57,7 +58,7 @@ struct MapView: UIViewRepresentable {
         
         return mapView
     }
-    var latlng:CLLocationCoordinate2D//Array<CLLocationDegrees>
+    @Binding public var latlng:CLLocationCoordinate2D//Array<CLLocationDegrees>
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
         if let annotation = annotation {
@@ -224,7 +225,7 @@ struct ContentView: View {
     @StateObject private var vm = Search()
     var body: some View {
         ZStack(alignment: .top) {
-            MapView(annotation: annotation,latlng: latlng)
+            MapView(annotation: annotation,latlng: $latlng)
                 .edgesIgnoringSafeArea(.all)
             TextField("Search", text: $vm.searchQuery)
                 .onReceive(
@@ -232,6 +233,9 @@ struct ContentView: View {
                         .debounce(for: .seconds(2), scheduler: DispatchQueue.main)
                 ) {
                     guard !$0.isEmpty else { return }
+                    /*if Auth.auth().currentUser == nil {
+                        Auth.auth().signInAnonymously()
+                    }*/
                     print(">> searching for: \($0)")
                     //performSearch(query: searchQuery)
                     //print("searching \(vm.$searchQuery) s \($vm.searchQuery) v \(vm.searchQuery)")
@@ -254,11 +258,9 @@ struct ContentView: View {
                                     print(place)
                                     //latlng = [place.features[0].center[1], place.features[0].center[0]]
                                     //latlng = [place?.features[0].center[0] ?? -74, place?.features[0].center[1] ?? 43]
-                                    print(latlng)
                                     Task {
                                         let consumerSecret = "iAkWSqAXXAFLtxiFJYQJeqYpWcZDVUbt"
                                         let urllString = "https://app.ticketmaster.com/discovery/v2/events.json?geoPoint=\(Geohash.encode(latitude:place.features[0].center[1], longitude:place.features[0].center[0], length:9))&size=150&apikey=\(consumerSecret)"
-                                        print("searching \(urllString)")
                                         let urll = URL(string: urllString)!
                                         let task = URLSession.shared.dataTask(with: urll) { dataa, response, error in
                                             //let (dataa, _) = try await URLSession.shared.data(from: urll)
@@ -266,7 +268,7 @@ struct ContentView: View {
                                                 do {
                                                     let ticketmaster = try decoder.decode(Ticketmaster.self, from: dataa)
                                                     //if ticketmaster?.Embedded.events.isEmpty! {
-                                                        print(ticketmaster)
+                                                    print(ticketmaster)
                                                     
                                                     for event in ticketmaster.Embedded.events {
                                                         let annotation = Annotation(coordinate: .init(latitude: Double(event.Embedded.venues[0].location.latitude)!,
@@ -277,6 +279,35 @@ struct ContentView: View {
                                                     
                                                     let db = Firestore.firestore()
 
+                                                    /*let geoFirestoreRef = db.collection("event")
+                                                    let geoFirestore = GeoFirestore(collectionRef: geoFirestoreRef)
+                                                    
+                                                    let center = GeoPoint(latitude: place.features[0].center[1], longitude: place.features[0].center[0])
+                                                    
+                                                    let circleQuery = geoFirestore.query(withCenter: center, radius: 100.0)
+                                                    let _ = circleQuery.observeReady {
+                                                        print("All initial data has been loaded and events have been fired!")
+                                                    }
+                                                    let _ = circleQuery.observe(.documentEntered, with: { (key, location) in
+                                                        geoFirestoreRef.document(key!).getDocument  { (document, error) in
+                                                            //if error != nil { return print(error ?? "missing permissions probably") }
+                                                                       if let document = document, document.exists {
+                                                                           
+                                                                           let dataDescription = document.data().map(String.init(describing:)) ?? "nil"
+                                                                           print("Document data: \(dataDescription)")
+                                                                           let event = Event(id: document.documentID,
+                                                                                             title: document["title"] as? String ?? "",
+                                                                                             center: document["center"] as? Array<CLLocationDegrees> ?? [-74,43],
+                                                                                             url: "https://tpt.net.co/event/\(document.documentID)")
+                                                                           print(event)
+                                                                           let annotation = Annotation(coordinate: .init(latitude: event.center[0],
+                                                                                                                         longitude: event.center[1]), title: event.title, subtitle: event.url)
+                                                                           self.annotation = annotation
+                                                                       } else {
+                                                                           print("Document does not exist.")
+                                                                       }
+                                                                   }
+                                                    })*/
                                                     db.collection("event").whereField("collection", isEqualTo: "event").getDocuments() { (querySnapshot, error) in
                                                                     if let error = error {
                                                                             print("Error getting documents: \(error)")
@@ -339,3 +370,4 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(FirestoreManager())
     }
 }
+
