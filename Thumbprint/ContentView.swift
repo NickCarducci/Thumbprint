@@ -223,11 +223,13 @@ struct ContentView: View {
         let _ = print("searching")
     }
     @StateObject private var vm = Search()
+    @FocusState private var nameIsFocused: Bool
     var body: some View {
         ZStack(alignment: .top) {
             MapView(annotation: annotation,latlng: $latlng)
                 .edgesIgnoringSafeArea(.all)
             TextField("Search", text: $vm.searchQuery)
+                .focused($nameIsFocused)
                 .onReceive(
                     vm.$searchQuery
                         .debounce(for: .seconds(2), scheduler: DispatchQueue.main)
@@ -251,14 +253,14 @@ struct ContentView: View {
                             decoder.dateDecodingStrategy = .iso8601
                             if let data = data{
                                 do {
+                                    
                                    let place = try decoder.decode(Place.self, from: data)
                                     print("found \(place)")
-                                    
                                     //place = try decoder.decode(Place.self, from: data)
                                     print(place)
+                                    if place.features.count == 0 {return}
                                     //latlng = [place.features[0].center[1], place.features[0].center[0]]
                                     //latlng = [place?.features[0].center[0] ?? -74, place?.features[0].center[1] ?? 43]
-                                    Task {
                                         let consumerSecret = "iAkWSqAXXAFLtxiFJYQJeqYpWcZDVUbt"
                                         let urllString = "https://app.ticketmaster.com/discovery/v2/events.json?geoPoint=\(Geohash.encode(latitude:place.features[0].center[1], longitude:place.features[0].center[0], length:9))&size=150&apikey=\(consumerSecret)"
                                         let urll = URL(string: urllString)!
@@ -334,7 +336,6 @@ struct ContentView: View {
                                             }
                                         }
                                         task.resume()
-                                    }
                                 } catch {
                                     print(error)
                                 }
@@ -357,6 +358,7 @@ struct ContentView: View {
                     .onTapGesture {
                             withAnimation(.default.speed(0.1)) {
                                 
+                                nameIsFocused = false
                             }
                     }
             }.padding()
