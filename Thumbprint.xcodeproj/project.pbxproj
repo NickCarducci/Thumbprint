@@ -8,20 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		A3117B0D2A59CDD4000001B3 /* GoogleService-Info.plist in Sources */ = {isa = PBXBuildFile; fileRef = A3117B0C2A59CDD4000001B3 /* GoogleService-Info.plist */; };
+		A3117B722A5DAF4B000001B3 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = A3117B712A5DAF4B000001B3 /* FirebaseFirestore */; };
 		A3A2843B2A5617DB00A8B6C3 /* Geohash.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3A2843A2A5617DB00A8B6C3 /* Geohash.swift */; };
 		A3FF4B9D2A54EBDC005DCE2C /* ThumbprintApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3FF4B9C2A54EBDC005DCE2C /* ThumbprintApp.swift */; };
 		A3FF4B9F2A54EBDC005DCE2C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3FF4B9E2A54EBDC005DCE2C /* ContentView.swift */; };
 		A3FF4BA12A54EBDD005DCE2C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A3FF4BA02A54EBDD005DCE2C /* Assets.xcassets */; };
 		A3FF4BA42A54EBDD005DCE2C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A3FF4BA32A54EBDD005DCE2C /* Preview Assets.xcassets */; };
-		C427BF9C6D2CD504B7F1034C /* Pods_Thumbprint.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15D95D2295743E1A77D38FE3 /* Pods_Thumbprint.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		15D95D2295743E1A77D38FE3 /* Pods_Thumbprint.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Thumbprint.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8A702F4FF112DDFC1D776A4D /* Pods-Thumbprint.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Thumbprint.debug.xcconfig"; path = "Target Support Files/Pods-Thumbprint/Pods-Thumbprint.debug.xcconfig"; sourceTree = "<group>"; };
-		97CD5E19A824D435440302D1 /* Pods-Thumbprint.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Thumbprint.release.xcconfig"; path = "Target Support Files/Pods-Thumbprint/Pods-Thumbprint.release.xcconfig"; sourceTree = "<group>"; };
 		A3117B0C2A59CDD4000001B3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		A3117B5E2A5B7267000001B3 /* Thumbprint.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thumbprint.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3117B732A5DB069000001B3 /* Thumbprint.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = Thumbprint.app; path = "/Users/nicholascarducci/Desktop/ios/Thumbprint/Thumbprint/build/Debug-iphoneos/Thumbprint.app"; sourceTree = "<absolute>"; };
 		A3A2843A2A5617DB00A8B6C3 /* Geohash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geohash.swift; sourceTree = "<group>"; };
 		A3FF4B9C2A54EBDC005DCE2C /* ThumbprintApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbprintApp.swift; sourceTree = "<group>"; };
 		A3FF4B9E2A54EBDC005DCE2C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -34,29 +31,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C427BF9C6D2CD504B7F1034C /* Pods_Thumbprint.framework in Frameworks */,
+				A3117B722A5DAF4B000001B3 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		62FEF89B45888BD1E7D7916D /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				8A702F4FF112DDFC1D776A4D /* Pods-Thumbprint.debug.xcconfig */,
-				97CD5E19A824D435440302D1 /* Pods-Thumbprint.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		A3FF4B902A54EBDC005DCE2C = {
 			isa = PBXGroup;
 			children = (
 				A3FF4B9B2A54EBDC005DCE2C /* Thumbprint */,
-				62FEF89B45888BD1E7D7916D /* Pods */,
-				A3117B5E2A5B7267000001B3 /* Thumbprint.app */,
-				AB2BC04AF3D6C91C788F8F31 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -81,14 +66,6 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		AB2BC04AF3D6C91C788F8F31 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				15D95D2295743E1A77D38FE3 /* Pods_Thumbprint.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -96,11 +73,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A3FF4BA72A54EBDD005DCE2C /* Build configuration list for PBXNativeTarget "Thumbprint" */;
 			buildPhases = (
-				C1AFBEBCB58D62E1AC8FACFF /* [CP] Check Pods Manifest.lock */,
 				A3FF4B952A54EBDC005DCE2C /* Sources */,
 				A3FF4B962A54EBDC005DCE2C /* Frameworks */,
 				A3FF4B972A54EBDC005DCE2C /* Resources */,
-				3E1588693FB4D9902FA16BB5 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -108,9 +83,10 @@
 			);
 			name = Thumbprint;
 			packageProductDependencies = (
+				A3117B712A5DAF4B000001B3 /* FirebaseFirestore */,
 			);
 			productName = Thumbprint;
-			productReference = A3117B5E2A5B7267000001B3 /* Thumbprint.app */;
+			productReference = A3117B732A5DB069000001B3 /* Thumbprint.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -139,6 +115,7 @@
 			);
 			mainGroup = A3FF4B902A54EBDC005DCE2C;
 			packageReferences = (
+				A3117B702A5DAF4B000001B3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = A3FF4B902A54EBDC005DCE2C;
 			projectDirPath = "";
@@ -160,48 +137,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		3E1588693FB4D9902FA16BB5 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Thumbprint/Pods-Thumbprint-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Thumbprint/Pods-Thumbprint-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Thumbprint/Pods-Thumbprint-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C1AFBEBCB58D62E1AC8FACFF /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Thumbprint-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A3FF4B952A54EBDC005DCE2C /* Sources */ = {
@@ -334,7 +269,6 @@
 		};
 		A3FF4BA82A54EBDD005DCE2C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8A702F4FF112DDFC1D776A4D /* Pods-Thumbprint.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -367,7 +301,6 @@
 		};
 		A3FF4BA92A54EBDD005DCE2C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 97CD5E19A824D435440302D1 /* Pods-Thumbprint.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -419,6 +352,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A3117B702A5DAF4B000001B3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A3117B712A5DAF4B000001B3 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A3117B702A5DAF4B000001B3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A3FF4B912A54EBDC005DCE2C /* Project object */;
 }

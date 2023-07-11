@@ -8,7 +8,7 @@
 import SwiftUI
 import MapKit
 import Firebase
-import Geofirestore
+//import Geofirestore
 
 struct MapView: UIViewRepresentable {
     
