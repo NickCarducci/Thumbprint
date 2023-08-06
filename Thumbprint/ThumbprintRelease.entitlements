@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>aps-environment</key>
-	<string>production</string>
+	<string>com.apple.developer.aps-environment</string>
 </dict>
 </plist>
