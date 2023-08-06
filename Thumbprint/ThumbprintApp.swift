@@ -6,7 +6,8 @@
 //
 
 import SwiftUI
-import Firebase
+import FirebaseCore
+import FirebaseAuth
 
 class FirestoreManager: ObservableObject {
 
@@ -17,6 +18,9 @@ struct ThumbprintApp: App {
     @StateObject var firestoreManager = FirestoreManager()
     init() {
         FirebaseApp.configure()
+        Auth.auth().signInAnonymously { authResult, error in
+          // ...
+        }
     }
     var body: some Scene {
         WindowGroup {
