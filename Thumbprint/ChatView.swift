@@ -109,10 +109,10 @@ struct NewEvent: View {
     @FocusState private var nameIsFocused: Bool
     
     @State private var currentDate = Date()
-    @State private var chosenPhoto = ""
-    @State var chosenCenter: Array<CLLocationDegrees> = []
-    @State var chosenPlaceName: String = ""
-    @State var chosenType: String = ""
+    @State private var chosenPhoto = "https://images.pexels.com/photos/47547/squirrel-animal-cute-rodents-47547.jpeg"
+    @State var chosenCenter: Array<CLLocationDegrees> = [43,-74]
+    @State var chosenPlaceName: String = "Galway, New York"
+    @State var chosenType: String = "business"
     
     @Binding var addEvent:Bool
     @State private var locations = [Loc]()
