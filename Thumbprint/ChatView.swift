@@ -179,20 +179,21 @@ struct NewEvent: View {
                             task.resume()
                         }
                     }
-                GeometryReader { geometry in
-                    ScrollView {
-                        List {//LazyVGrid(columns: columns) {
-                            ForEach ($locations.indices, id: \.self){ index in
-                                LocationSubView(chosenCenter:$chosenCenter,chosenPlaceName:$chosenPlaceName,placeName: $locations[index].placeName,center: $locations[index].center)
+                HStack {
+                    GeometryReader { geometry in
+                        ScrollView {
+                            List {//LazyVGrid(columns: columns) {
+                                ForEach ($locations.indices, id: \.self){ index in
+                                    LocationSubView(chosenCenter:$chosenCenter,chosenPlaceName:$chosenPlaceName,placeName: $locations[index].placeName,center: $locations[index].center)
+                                }
                             }
+                            .frame(width: geometry.size.width,
+                                   height: geometry.size.height)
                         }
-                        .frame(width: geometry.size.width,
-                               height: geometry.size.height)
+                        .frame(height: .infinity)
                     }
-                    .frame(height: .infinity)
                 }
             }
-            .background(Color.white)
             VStack{
                 GeometryReader { geometry in
                     ScrollView {
@@ -213,7 +214,6 @@ struct NewEvent: View {
                     .frame(height: .infinity)
                 }
             }
-            .background(Color.white)
             VStack{
                 DatePicker("", selection: $currentDate, displayedComponents: [.date, .hourAndMinute])
                 .labelsHidden()
@@ -309,7 +309,6 @@ struct NewEvent: View {
                     .frame(height: .infinity)
                 }
             }
-            .background(Color.white)
         }
         .tabViewStyle(PageTabViewStyle())
     }
