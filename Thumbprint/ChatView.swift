@@ -194,6 +194,7 @@ struct NewEvent: View {
                     }
                 }
             }
+            .padding(EdgeInsets(top: 0, leading: 0, bottom: 50, trailing: 0))
             VStack{
                 GeometryReader { geometry in
                     ScrollView {
@@ -214,6 +215,7 @@ struct NewEvent: View {
                     .frame(height: .infinity)
                 }
             }
+            .padding(EdgeInsets(top: 0, leading: 0, bottom: 50, trailing: 0))
             VStack{
                 DatePicker("", selection: $currentDate, displayedComponents: [.date, .hourAndMinute])
                 .labelsHidden()
@@ -309,6 +311,7 @@ struct NewEvent: View {
                     .frame(height: .infinity)
                 }
             }
+            .padding(EdgeInsets(top: 0, leading: 0, bottom: 50, trailing: 0))
         }
         .tabViewStyle(PageTabViewStyle())
     }
