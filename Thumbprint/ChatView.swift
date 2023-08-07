@@ -276,6 +276,10 @@ struct NewEvent: View {
                             ref = db.collection("event").addDocument(data: [
                                 "place_name": chosenPlaceName,
                                 "center": chosenCenter,
+                                "g":[
+                                    "geohash": Geohash.encode(latitude: chosenCenter[0], longitude: chosenCenter[1], length: 10),
+                                    "geopoint": GeoPoint(latitude:chosenCenter[0],longitude: chosenCenter[1])
+                                ],
                                 "coordinates": GeoPoint(latitude:chosenCenter[0],longitude: chosenCenter[1]),
                                 "date": dateFormatter.string(from: currentDate),
                                 "chosenPhoto": chosenPhoto,
