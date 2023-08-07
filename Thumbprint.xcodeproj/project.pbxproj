@@ -21,7 +21,6 @@
 /* Begin PBXFileReference section */
 		A307FAD82A60D1DA00028483 /* Thumbprint.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thumbprint.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3117B0C2A59CDD4000001B3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		A3894AEB2A7FD824009588CF /* ThumbprintRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ThumbprintRelease.entitlements; sourceTree = "<group>"; };
 		A3894AEC2A7FDA7E009588CF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A3A2843A2A5617DB00A8B6C3 /* Geohash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geohash.swift; sourceTree = "<group>"; };
 		A3CD39CC2A702DE800175C40 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
@@ -56,7 +55,6 @@
 			isa = PBXGroup;
 			children = (
 				A3894AEC2A7FDA7E009588CF /* Info.plist */,
-				A3894AEB2A7FD824009588CF /* ThumbprintRelease.entitlements */,
 				A3117B0C2A59CDD4000001B3 /* GoogleService-Info.plist */,
 				A3FF4B9C2A54EBDC005DCE2C /* ThumbprintApp.swift */,
 				A3CD39CC2A702DE800175C40 /* ChatView.swift */,

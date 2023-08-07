@@ -133,129 +133,42 @@ struct NewEvent: View {
         Types(name: "day party festival")
     ]
     var body: some View {
-        VStack{
-            TextField("Places", text: $vm1.searchQuery).padding()
-                .focused($nameIsFocused)
-                .onReceive(
-                    vm1.$searchQuery
-                        .debounce(for: .seconds(2), scheduler: DispatchQueue.main)
-                ) {
-                    guard !$0.isEmpty else { return }
-                    /*if Auth.auth().currentUser == nil {
-                        Auth.auth().signInAnonymously()
-                    }*/
-                    locations = []
-                    print(">> searching for: \($0)")
-                    //performSearch(query: searchQuery)
-                    //print("searching \(vm.$searchQuery) s \($vm.searchQuery) v \(vm.searchQuery)")
-                    Task {
-                        let urlString =
-                        "https://api.mapbox.com/geocoding/v5/mapbox.places/\(vm1.searchQuery.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!).json?limit=2&access_token=pk.eyJ1Ijoibmlja2NhcmR1Y2NpIiwiYSI6ImNrMWhyZ3ZqajBhcm8zY3BoMnVnbW02dXQifQ.aw4gJV_fsZ1GKDjaWPxemQ"
-                        let url = URL(string: urlString)!
-                        print("searching \(urlString)")
-                        //let (data, _) = try await URLSession.shared.data(from: url)
-                        
-                        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-                            //if error != nil { return print(error) }
-                            let decoder = JSONDecoder()
-                            decoder.dateDecodingStrategy = .iso8601
-                            if let data = data{
-                                do {
-                                   let place = try decoder.decode(Place.self, from: data)
-                                    for location in place.features {
-                                            //print("\(document.documentID): \(document.data())")
-                                        let loc = Loc(center: [location.center[1],location.center[0]],placeName:location.placeName)
-                                        //print(post)
-                                        
-                                        locations.append(loc)
-                                        
-                                    }
-                                } catch {
-                                    print(error)
-                                }
-                            }
-                        }
-                        task.resume()
-                    }
-                }
-            GeometryReader { geometry in
-                ScrollView {
-                    List {//LazyVGrid(columns: columns) {
-                        ForEach ($locations.indices, id: \.self){ index in
-                            LocationSubView(chosenCenter:$chosenCenter,chosenPlaceName:$chosenPlaceName,placeName: $locations[index].placeName,center: $locations[index].center)
-                        }
-                    }
-                    .frame(width: geometry.size.width,
-                           height: geometry.size.height)
-                }
-                .frame(height: .infinity)
-            }
-            GeometryReader { geometry in
-                ScrollView {
-                    LazyVGrid(columns: columns) {
-                        ForEach (0 ..< types.count, id: \.self){ index in
-                            Text(types[index].name)
-                                .onTapGesture {
-                                    chosenType = types[index].name
-                                    print("\(chosenType)")
-                                }
-                                .border(chosenType == types[index].name ? .green : .gray)
-                                .padding(2)
-                        }
-                    }
-                    .frame(width: geometry.size.width,
-                           height: geometry.size.height)
-                }
-                .frame(height: .infinity)
-            }
-            GeometryReader { geometry in
-                ScrollView {
-                    List {//LazyVGrid(columns: columns) {
-                        ForEach ($images.indices, id: \.self){ index in
-                            ImageSubView(chosenPhoto: $chosenPhoto,urll: $images[index].url)
-                        }
-                    }
-                    .frame(width: geometry.size.width,
-                           height: geometry.size.height)
-                }
-                .frame(height: .infinity)
-            }
-            DatePicker("", selection: $currentDate, displayedComponents: [.date, .hourAndMinute])
-            .labelsHidden()
-            HStack {
-                TextField("Title", text: $vm.searchQuery).padding()
+        TabView {
+            VStack{
+                TextField("Places", text: $vm1.searchQuery).padding()
                     .focused($nameIsFocused)
                     .onReceive(
-                        vm.$searchQuery
+                        vm1.$searchQuery
                             .debounce(for: .seconds(2), scheduler: DispatchQueue.main)
                     ) {
                         guard !$0.isEmpty else { return }
-                        images = []
-                        
+                        /*if Auth.auth().currentUser == nil {
+                            Auth.auth().signInAnonymously()
+                        }*/
+                        locations = []
+                        print(">> searching for: \($0)")
+                        //performSearch(query: searchQuery)
+                        //print("searching \(vm.$searchQuery) s \($vm.searchQuery) v \(vm.searchQuery)")
                         Task {
                             let urlString =
-                            "https://api.pexels.com/v1/search?query=\(vm.searchQuery.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!)&per_page=9&page=1"
-                          
+                            "https://api.mapbox.com/geocoding/v5/mapbox.places/\(vm1.searchQuery.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!).json?limit=2&access_token=pk.eyJ1Ijoibmlja2NhcmR1Y2NpIiwiYSI6ImNrMWhyZ3ZqajBhcm8zY3BoMnVnbW02dXQifQ.aw4gJV_fsZ1GKDjaWPxemQ"
                             let url = URL(string: urlString)!
                             print("searching \(urlString)")
                             //let (data, _) = try await URLSession.shared.data(from: url)
                             
-                            var request = URLRequest(url: url)
-                            request.setValue("563492ad6f91700001000001702cdbab8c46478a86694c18d3e1bc6b", forHTTPHeaderField: "Authorization")
-                            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                            let task = URLSession.shared.dataTask(with: url) { data, response, error in
                                 //if error != nil { return print(error) }
                                 let decoder = JSONDecoder()
                                 decoder.dateDecodingStrategy = .iso8601
                                 if let data = data{
                                     do {
-                                       let photo = try decoder.decode(Photos.self, from: data)
-                                        print("\(photo)")
-                                        for image in photo.photos {
+                                       let place = try decoder.decode(Place.self, from: data)
+                                        for location in place.features {
                                                 //print("\(document.documentID): \(document.data())")
-                                            let img = Img(url: image.src.original)
+                                            let loc = Loc(center: [location.center[1],location.center[0]],placeName:location.placeName)
                                             //print(post)
                                             
-                                            images.append(img)
+                                            locations.append(loc)
                                             
                                         }
                                     } catch {
@@ -266,42 +179,139 @@ struct NewEvent: View {
                             task.resume()
                         }
                     }
-                Spacer()
-                Button(action: {
-                    if chosenPhoto != "" {
-                        let dateFormatter = DateFormatter()
-                        dateFormatter.locale = .init(identifier: "en_US_POSIX")
-                        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-
-                        var ref: DocumentReference? = nil
-                        let db = Firestore.firestore()
-                        ref = db.collection("event").addDocument(data: [
-                            "place_name": chosenPlaceName,
-                            "center": chosenCenter,
-                            "coordinates": GeoPoint(latitude:chosenCenter[0],longitude: chosenCenter[1]),
-                            "date": dateFormatter.string(from: currentDate),
-                            "chosenPhoto": chosenPhoto,
-                            "title": vm.searchQuery,
-                            "subtype": FieldValue.arrayUnion([chosenType]),
-                            "collection": "event"
-                        ]) { err in
-                            if let err = err {
-                                print("Error adding document: \(err)")
-                            } else {
-                                print("Document added with ID: \(ref!.documentID)")
+                GeometryReader { geometry in
+                    ScrollView {
+                        List {//LazyVGrid(columns: columns) {
+                            ForEach ($locations.indices, id: \.self){ index in
+                                LocationSubView(chosenCenter:$chosenCenter,chosenPlaceName:$chosenPlaceName,placeName: $locations[index].placeName,center: $locations[index].center)
                             }
                         }
-                        addEvent = false
-                        
+                        .frame(width: geometry.size.width,
+                               height: geometry.size.height)
                     }
-                }) {
-                    HStack {
-                        Image(systemName: "arrow.up")
-                    }
-                }.buttonStyle(GradientButtonStyle())
+                    .frame(height: .infinity)
+                }
             }
+            .background(Color.white)
+            VStack{
+                GeometryReader { geometry in
+                    ScrollView {
+                        LazyVGrid(columns: columns) {
+                            ForEach (0 ..< types.count, id: \.self){ index in
+                                Text(types[index].name)
+                                    .onTapGesture {
+                                        chosenType = types[index].name
+                                        print("\(chosenType)")
+                                    }
+                                    .border(chosenType == types[index].name ? .green : .gray)
+                                    .padding(2)
+                            }
+                        }
+                        .frame(width: geometry.size.width,
+                               height: geometry.size.height)
+                    }
+                    .frame(height: .infinity)
+                }
+            }
+            .background(Color.white)
+            VStack{
+                DatePicker("", selection: $currentDate, displayedComponents: [.date, .hourAndMinute])
+                .labelsHidden()
+                .padding()
+                HStack {
+                    TextField("Title", text: $vm.searchQuery).padding()
+                        .focused($nameIsFocused)
+                        .onReceive(
+                            vm.$searchQuery
+                                .debounce(for: .seconds(2), scheduler: DispatchQueue.main)
+                        ) {
+                            guard !$0.isEmpty else { return }
+                            images = []
+                            
+                            Task {
+                                let urlString =
+                                "https://api.pexels.com/v1/search?query=\(vm.searchQuery.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!)&per_page=9&page=1"
+                              
+                                let url = URL(string: urlString)!
+                                print("searching \(urlString)")
+                                //let (data, _) = try await URLSession.shared.data(from: url)
+                                
+                                var request = URLRequest(url: url)
+                                request.setValue("563492ad6f91700001000001702cdbab8c46478a86694c18d3e1bc6b", forHTTPHeaderField: "Authorization")
+                                let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                                    //if error != nil { return print(error) }
+                                    let decoder = JSONDecoder()
+                                    decoder.dateDecodingStrategy = .iso8601
+                                    if let data = data{
+                                        do {
+                                           let photo = try decoder.decode(Photos.self, from: data)
+                                            print("\(photo)")
+                                            for image in photo.photos {
+                                                    //print("\(document.documentID): \(document.data())")
+                                                let img = Img(url: image.src.original)
+                                                //print(post)
+                                                
+                                                images.append(img)
+                                                
+                                            }
+                                        } catch {
+                                            print(error)
+                                        }
+                                    }
+                                }
+                                task.resume()
+                            }
+                        }
+                    Spacer()
+                    Button(action: {
+                        if vm.searchQuery != "" {
+                            let dateFormatter = DateFormatter()
+                            dateFormatter.locale = .init(identifier: "en_US_POSIX")
+                            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+
+                            var ref: DocumentReference? = nil
+                            let db = Firestore.firestore()
+                            ref = db.collection("event").addDocument(data: [
+                                "place_name": chosenPlaceName,
+                                "center": chosenCenter,
+                                "coordinates": GeoPoint(latitude:chosenCenter[0],longitude: chosenCenter[1]),
+                                "date": dateFormatter.string(from: currentDate),
+                                "chosenPhoto": chosenPhoto,
+                                "title": vm.searchQuery,
+                                "subtype": FieldValue.arrayUnion([chosenType]),
+                                "collection": "event"
+                            ]) { err in
+                                if let err = err {
+                                    print("Error adding document: \(err)")
+                                } else {
+                                    print("Document added with ID: \(ref!.documentID)")
+                                }
+                            }
+                            addEvent = false
+                            
+                        }
+                    }) {
+                        HStack {
+                            Image(systemName: "arrow.up")
+                        }
+                    }.buttonStyle(GradientButtonStyle())
+                }
+                GeometryReader { geometry in
+                    ScrollView {
+                        List {//LazyVGrid(columns: columns) {
+                            ForEach ($images.indices, id: \.self){ index in
+                                ImageSubView(chosenPhoto: $chosenPhoto,urll: $images[index].url)
+                            }
+                        }
+                        .frame(width: geometry.size.width,
+                               height: geometry.size.height)
+                    }
+                    .frame(height: .infinity)
+                }
+            }
+            .background(Color.white)
         }
-        .background(Color.white)
+        .tabViewStyle(PageTabViewStyle())
     }
 }
 struct GradientButtonStyle: ButtonStyle {
