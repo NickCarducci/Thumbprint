@@ -225,7 +225,7 @@ struct ContentView: View {
             MapView(annotation: annotation,latlng: $latlng)
                 .edgesIgnoringSafeArea(.all)
             VStack{
-                TextField("Search", text: $vm.searchQuery).padding()
+                TextField("Cities", text: $vm.searchQuery).padding()
                     .focused($nameIsFocused)
                     .onReceive(
                         vm.$searchQuery
@@ -306,6 +306,9 @@ struct ContentView: View {
                                                                     print(event)
                                                                     let annotation = Annotation(coordinate: .init(latitude: event.center[0],
                                                                                                                   longitude: event.center[1]), title: event.title, subtitle: event.url)
+                                                                        /*.onLongPressGesture {
+                                                                            UIApplication.shared.open(URL(string: "https://tpt.net.co/event/\(document.documentID)")!
+                                                                        }*/
                                                                     self.annotation = annotation
                                                                 }
                                                         }
