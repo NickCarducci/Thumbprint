@@ -22,7 +22,7 @@ struct MapView: UIViewRepresentable {
         }
         print("updated \(latlng)")
         //let center = latlng//CLLocationCoordinate2D(latitude: latlng[0], longitude: latlng[1])
-        let span = MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+        let span = MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)
         let region = MKCoordinateRegion(center: latlng, span: span)
         uiView.setRegion(region, animated: true)
     }
@@ -30,7 +30,7 @@ struct MapView: UIViewRepresentable {
     func makeUIView(context: Context) -> MKMapView {
         
         let center = CLLocationCoordinate2D(latitude: 43, longitude: -74)
-        let span = MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+        let span = MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)
         let region = MKCoordinateRegion(center: center, span: span)
         mapView.setRegion(region, animated: true)
         

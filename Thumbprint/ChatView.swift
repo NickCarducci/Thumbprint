@@ -135,7 +135,7 @@ struct NewEvent: View {
     var body: some View {
         TabView {
             VStack{
-                TextField("Places", text: $vm1.searchQuery).padding()
+                TextField("", text: $vm1.searchQuery).padding()
                     .focused($nameIsFocused)
                     .onReceive(
                         vm1.$searchQuery
@@ -179,6 +179,21 @@ struct NewEvent: View {
                             task.resume()
                         }
                     }
+                    .background(
+                        ZStack{
+                        Color(UIColor.systemBackground)
+                            if vm1.searchQuery.count == 0 {
+                                HStack {
+                                    Text("Places")
+                                        .foregroundColor(.gray)
+                                        .padding(.horizontal)
+                                    Spacer()
+                              }
+                             .frame(maxWidth: .infinity)
+                            }
+                        }
+                    )
+                    //.background(Color(UIColor.systemBackground))
                 HStack {
                     GeometryReader { geometry in
                         ScrollView {
@@ -221,7 +236,7 @@ struct NewEvent: View {
                 .labelsHidden()
                 .padding()
                 HStack {
-                    TextField("Title", text: $vm.searchQuery).padding()
+                    TextField("", text: $vm.searchQuery).padding()
                         .focused($nameIsFocused)
                         .onReceive(
                             vm.$searchQuery
@@ -264,6 +279,20 @@ struct NewEvent: View {
                                 task.resume()
                             }
                         }
+                        .background(
+                            ZStack{
+                            Color(UIColor.systemBackground)
+                                if vm1.searchQuery.count == 0 {
+                                    HStack {
+                                        Text("Title")
+                                            .foregroundColor(.gray)
+                                            .padding(.horizontal)
+                                        Spacer()
+                                  }
+                                 .frame(maxWidth: .infinity)
+                                }
+                            }
+                        )
                     Spacer()
                     Button(action: {
                         if vm.searchQuery != "" {
