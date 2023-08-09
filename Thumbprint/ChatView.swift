@@ -282,7 +282,7 @@ struct NewEvent: View {
                         .background(
                             ZStack{
                             Color(UIColor.systemBackground)
-                                if vm1.searchQuery.count == 0 {
+                                if vm.searchQuery.count == 0 {
                                     HStack {
                                         Text("Title")
                                             .foregroundColor(.gray)
