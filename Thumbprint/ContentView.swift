@@ -18,6 +18,9 @@ struct MapView: UIViewRepresentable {
     @Binding var latlng:CLLocationCoordinate2D//Array<CLLocationDegrees>
     func updateUIView(_ uiView: MKMapView, context: Context) {
         if let annotation = annotation {
+            //UIAlertController
+            //annotation.rightCalloutAccessoryView = rightButton
+            
             uiView.addAnnotation(annotation)
         }
         print("updated \(latlng)")
@@ -34,38 +37,71 @@ struct MapView: UIViewRepresentable {
         let region = MKCoordinateRegion(center: center, span: span)
         mapView.setRegion(region, animated: true)
         
+        /*let longPressed = UILongPressGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.addPin(gesture:)))
+        mapView.addGestureRecognizer(longPressed)*/
+        
         return mapView
     }
+    //@Binding var showingAlert: String
     class Coordinator: NSObject, MKMapViewDelegate {
         init(mapView: MKMapView){
             super.init()
             mapView.delegate = self
+            
         }
-        private func mapView(_ mapView: MKMapView, viewFor annotation: Annotation) -> MKAnnotationView? {
+        /*@objc func addPin(gesture: UILongPressGestureRecognizer) {
+            // do whatever needed here
+            $showingAlert = annotation!.subtitle!
+        }*/
+        func mapView(_ mapView: MKMapView, viewFor annotation: Annotation, calloutAccessoryControlTapped control: UIControl) -> MKAnnotationView? {
+            
             let pin = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "id")
-            pin.canShowCallout = true
+            pin.canShowCallout = false
+            pin.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
+            
+            
+            if control == pin.rightCalloutAccessoryView {
+                UIApplication.shared.open(URL(string: annotation.subtitle!)!)
+            }
             
             return pin
+        }
+        func mapView(_ mapView: MKMapView,didSelect view: MKAnnotationView){
+            if view.annotation is MKUserLocation { return }
+
+            /*currentCallout?.removeFromSuperview()
+            let customCallout = UIView()
+            //customCallout.frame = .init(x: 0, y: 0, width: 100, height: 200)
+            
+            view.addSubview(customCallout)
+            customCallout.translatesAutoresizingMaskIntoConstraints=false
+            customCallout.widthAnchor.constraint(equalToConstant: 100).isActive = true
+            customCallout.heightAnchor.constraint(equalToConstant: 200).isActive = true
+            customCallout.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+            //customCallout.centerYAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+            currentCallout = customCallout*/
+            
+            //let annotation = view.annotation as? Annotation
+            //print("\(annotation!.subtitle!)")
+            if let annotationTitle = view.annotation?.subtitle {
+                UIApplication.shared.open(URL(string: annotationTitle!)!)
+                //print("User tapped on annotation with title: \(annotationTitle!)")
+            }
         }
     }
     func makeCoordinator() -> Coordinator {
         Coordinator(mapView: mapView)
     }
-    
-    var currentCallout: UIView?
-    /*func mapView(_ mapView: MKMapView,didSelect view: MKAnnotationView){
-        currentCallout?.removeFromSuperview()
-        let customCallout = UIView()
-        //customCallout.frame = .init(x: 0, y: 0, width: 100, height: 200)
-        
-        view.addSubview(customCallout)
-        customCallout.translatesAutoresizingMaskIntoConstraints=false
-        customCallout.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        customCallout.heightAnchor.constraint(equalToConstant: 200).isActive = true
-        customCallout.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        //customCallout.centerYAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        currentCallout = customCallout
+    /*func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+
+        let ac = UIAlertController(title: "", message: "Open Event?", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            UIApplication.shared.open(URL(string: annotation!.subtitle!)!)
+            }
+        ))
+        present(ac, animated: true)
     }*/
+    var currentCallout: UIView?
     typealias UIViewType = MKMapView
 }
 struct Event {
@@ -191,6 +227,7 @@ class Annotation: NSObject, MKAnnotation {
         self.coordinate = coordinate
         self.title = title
         self.subtitle = subtitle
+        super.init()
     }
 }
 class Fetch: ObservableObject {
@@ -220,10 +257,18 @@ struct ContentView: View {
     }
     @StateObject private var vm = Search()
     @FocusState private var nameIsFocused: Bool
+    
+    //@State public var showingAlert: String
     var body: some View {
         ZStack(alignment: .top) {
             MapView(annotation: annotation,latlng: $latlng)
                 .edgesIgnoringSafeArea(.all)
+                /*.confirmationDialog("Are you sure?",
+                  isPresented: $showingAlert) {
+                  Button("Open link?", role: .destructive) {
+                      UIApplication.shared.open(URL(string: showingAlert)!)
+                   }
+                 }*/
             VStack{
                 TextField("Cities", text: $vm.searchQuery).padding()
                     .focused($nameIsFocused)
@@ -349,7 +394,7 @@ struct ContentView: View {
                         }
                     }
                 Spacer()
-                AddEvent()
+                AddEvent(latlng: $latlng)
             }
             /*HStack{
                 Image(systemName: "pencil.circle")

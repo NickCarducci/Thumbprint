@@ -132,6 +132,9 @@ struct NewEvent: View {
         Types(name: "party & clubbing"),
         Types(name: "day party festival")
     ]
+    
+    @Binding var latlng: CLLocationCoordinate2D
+    @State private var presentAlert = false
     var body: some View {
         TabView {
             VStack{
@@ -303,6 +306,7 @@ struct NewEvent: View {
                             var ref: DocumentReference? = nil
                             let db = Firestore.firestore()
                             ref = db.collection("event").addDocument(data: [
+                                "city": chosenPlaceName,
                                 "place_name": chosenPlaceName,
                                 "center": chosenCenter,
                                 "g":[
@@ -310,7 +314,9 @@ struct NewEvent: View {
                                     "geopoint": GeoPoint(latitude:chosenCenter[0],longitude: chosenCenter[1])
                                 ],
                                 "coordinates": GeoPoint(latitude:chosenCenter[0],longitude: chosenCenter[1]),
-                                "date": dateFormatter.string(from: currentDate),
+                                "date": [
+                                    "seconds": currentDate.timeIntervalSince1970//dateFormatter.string(from: currentDate)
+                                ],
                                 "chosenPhoto": chosenPhoto,
                                 "title": vm.searchQuery,
                                 "subtype": FieldValue.arrayUnion([chosenType]),
@@ -323,6 +329,10 @@ struct NewEvent: View {
                                 }
                             }
                             addEvent = false
+                            vm.searchQuery = ""
+                            
+                            latlng = CLLocationCoordinate2D(latitude: chosenCenter[0], longitude: chosenCenter[1])
+                            presentAlert = true
                             
                         }
                     }) {
@@ -330,6 +340,7 @@ struct NewEvent: View {
                             Image(systemName: "arrow.up")
                         }
                     }.buttonStyle(GradientButtonStyle())
+                        .alert("Search Cities for events", isPresented: $presentAlert, actions: {})
                 }
                 GeometryReader { geometry in
                     ScrollView {
@@ -361,9 +372,10 @@ struct GradientButtonStyle: ButtonStyle {
 }
 struct AddEvent: View {
     @State public var addEvent: Bool = false
+    @Binding var latlng: CLLocationCoordinate2D
     var body: some View {
         
-        NewEvent(addEvent: $addEvent)
+        NewEvent(addEvent: $addEvent, latlng: $latlng)
             .offset(x: addEvent ? 0 : UIScreen.screenHeight)
             .frame(width: addEvent ? .infinity : 0)
         Button(action: {
