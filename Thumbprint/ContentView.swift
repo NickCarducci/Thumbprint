@@ -9,6 +9,8 @@ import SwiftUI
 import MapKit
 import Firebase
 //import Geofirestore
+import CoreLocation
+import CoreLocationUI
 
 struct MapView: UIViewRepresentable {
     
@@ -238,7 +240,56 @@ class Fetch: ObservableObject {
 class Search: ObservableObject {
     @Published var searchQuery: String = ""
 }
+/*class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+    let manager = CLLocationManager()
+
+    @Published var location: CLLocationCoordinate2D?
+
+    override init() {
+        super.init()
+        manager.delegate = self
+    }
+
+    func requestLocation() {
+        manager.requestLocation()
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        location = locations.first?.coordinate
+    }
+}*/
+struct FirestoreSubView: View {
+    @Binding public var show:String
+    @Binding public var message:String
+    let defaults = UserDefaults.standard
+    var body: some View {
+        HStack{
+            Text("\(message)")
+                .padding(10)
+        }
+    }
+}
+
+struct Post {
+    var id: String
+    var message: String
+}
+extension Post: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case id = "id"
+        case message = "message"
+    }
+    init(from decoder: Decoder) throws {
+        let podcastContainer = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try podcastContainer.decode(String.self, forKey: .id)
+        self.message = try podcastContainer.decode(String.self, forKey: .message)
+    }
+}
+
+
 struct ContentView: View {
+    //@StateObject var locationManager = LocationManager()
+    //@ObservedObject var locationManager = LocationManager()
     
     @State var annotation: Annotation?
     @State var annotations = [Annotation]()
@@ -249,7 +300,7 @@ struct ContentView: View {
     
     @State var latlng =//:Array<CLLocationDegrees> =
     CLLocationCoordinate2D(latitude: 43, longitude: -74)
-    
+    @State var placename:String=""
     fileprivate func performSearch(query: String){
         
 
@@ -259,6 +310,8 @@ struct ContentView: View {
     @FocusState private var nameIsFocused: Bool
     
     //@State public var showingAlert: String
+    @State public var show: String = ""
+    @State private var rocks = [Post]()
     var body: some View {
         ZStack(alignment: .top) {
             MapView(annotation: annotation,latlng: $latlng)
@@ -270,132 +323,230 @@ struct ContentView: View {
                    }
                  }*/
             VStack{
-                TextField("Cities", text: $vm.searchQuery).padding()
-                    .focused($nameIsFocused)
-                    .onReceive(
-                        vm.$searchQuery
-                            .debounce(for: .seconds(2), scheduler: DispatchQueue.main)
-                    ) {
-                        guard !$0.isEmpty else { return }
-                        /*if Auth.auth().currentUser == nil {
-                            Auth.auth().signInAnonymously()
-                        }*/
-                        print(">> searching for: \($0)")
-                        //performSearch(query: searchQuery)
-                        //print("searching \(vm.$searchQuery) s \($vm.searchQuery) v \(vm.searchQuery)")
-                        Task {
-                            let urlString = "https://api.mapbox.com/geocoding/v5/mapbox.places/\(vm.searchQuery.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!).json?limit=2&types=place&access_token=pk.eyJ1Ijoibmlja2NhcmR1Y2NpIiwiYSI6ImNrMWhyZ3ZqajBhcm8zY3BoMnVnbW02dXQifQ.aw4gJV_fsZ1GKDjaWPxemQ"
-                            let url = URL(string: urlString)!
-                            print("searching \(urlString)")
-                            //let (data, _) = try await URLSession.shared.data(from: url)
-                            
-                            let task = URLSession.shared.dataTask(with: url) { data, response, error in
-                                //if error != nil { return print(error) }
-                                let decoder = JSONDecoder()
-                                decoder.dateDecodingStrategy = .iso8601
-                                if let data = data{
-                                    do {
-                                       let place = try decoder.decode(Place.self, from: data)
-                                        print("found \(place)")
-                                        //place = try decoder.decode(Place.self, from: data)
-                                        print(place)
-                                        if place.features.count == 0 {return}
-                                        latlng = CLLocationCoordinate2D(latitude: place.features[0].center[1], longitude: place.features[0].center[0])
-                                        print(latlng)
-                                        nameIsFocused = false
-                                        
-                                        let db = Firestore.firestore()
-
-                                        /*let geoFirestoreRef = db.collection("event")
-                                        let geoFirestore = GeoFirestore(collectionRef: geoFirestoreRef)
-                                        
-                                        let center = GeoPoint(latitude: place.features[0].center[1], longitude: place.features[0].center[0])
-                                        
-                                        let circleQuery = geoFirestore.query(withCenter: center, radius: 100.0)
-                                        let _ = circleQuery.observeReady {
-                                            print("All initial data has been loaded and events have been fired!")
-                                        }
-                                        let _ = circleQuery.observe(.documentEntered, with: { (key, location) in
-                                            geoFirestoreRef.document(key!).getDocument  { (document, error) in
-                                                //if error != nil { return print(error ?? "missing permissions probably") }
-                                                           if let document = document, document.exists {
-                                                               
-                                                               let dataDescription = document.data().map(String.init(describing:)) ?? "nil"
-                                                               print("Document data: \(dataDescription)")
-                                                               let event = Event(id: document.documentID,
-                                                                                 title: document["title"] as? String ?? "",
-                                                                                 center: document["center"] as? Array<CLLocationDegrees> ?? [-74,43],
-                                                                                 url: "https://tpt.net.co/event/\(document.documentID)")
-                                                               print(event)
-                                                               let annotation = Annotation(coordinate: .init(latitude: event.center[0],
-                                                                                                             longitude: event.center[1]), title: event.title, subtitle: event.url)
-                                                               self.annotation = annotation
-                                                           } else {
-                                                               print("Document does not exist.")
-                                                           }
-                                                       }
-                                        })*/
-                                        db.collection("event").whereField("collection", isEqualTo: "event").getDocuments() { (querySnapshot, error) in
-                                                        if let error = error {
-                                                                print("Error getting documents: \(error)")
-                                                        } else {
-                                                                if querySnapshot!.documents.isEmpty {
-                                                                    return print("is empty")
-                                                                }
-                                                                for document in querySnapshot!.documents {
-                                                                        //print("\(document.documentID): \(document.data())")
-                                                                    let event = Event(id: document.documentID,
-                                                                                      title: document["title"] as? String ?? "",
-                                                                                      center: document["center"] as? Array<CLLocationDegrees> ?? [-74,43],
-                                                                                      url: "https://tpt.net.co/event/\(document.documentID)")
-                                                                    print(event)
-                                                                    let annotation = Annotation(coordinate: .init(latitude: event.center[0],
-                                                                                                                  longitude: event.center[1]), title: event.title, subtitle: event.url)
-                                                                        /*.onLongPressGesture {
-                                                                            UIApplication.shared.open(URL(string: "https://tpt.net.co/event/\(document.documentID)")!
-                                                                        }*/
-                                                                    self.annotation = annotation
-                                                                }
-                                                        }
-                                                }
-                                        //latlng = [place?.features[0].center[0] ?? -74, place?.features[0].center[1] ?? 43]
-                                            let consumerSecret = "iAkWSqAXXAFLtxiFJYQJeqYpWcZDVUbt"
-                                            let urllString = "https://app.ticketmaster.com/discovery/v2/events.json?geoPoint=\(Geohash.encode(latitude:place.features[0].center[1], longitude:place.features[0].center[0], length:9))&classificationName=music&size=150&apikey=\(consumerSecret)"
-                                            let urll = URL(string: urllString)!
-                                            let task = URLSession.shared.dataTask(with: urll) { dataa, response, error in
-                                                //let (dataa, _) = try await URLSession.shared.data(from: urll)
-                                                if let dataa = dataa{
-                                                    do {
-                                                        let ticketmaster = try decoder.decode(Ticketmaster.self, from: dataa)
-                                                        //if ticketmaster?.Embedded.events.isEmpty! {
-                                                        print(ticketmaster)
-                                                        //if ticketmaster.Embedded.events.count == 0 {return}
-                                                        
-                                                        for event in ticketmaster.Embedded.events {
-                                                            let annotation = Annotation(coordinate: .init(latitude: Double(event.Embedded.venues[0].location.latitude)!,
-                                                                                                          longitude: Double(event.Embedded.venues[0].location.longitude)!), title: event.name, subtitle: event.url) //MKPointAnnotation
-                                                                
-                                                            self.annotation = annotation
-                                                        }
-                                                        
-                                                    } catch {
-                                                        print(error)
-                                                    }
-                                                }
-                                            }
-                                            task.resume()
-                                    } catch {
-                                        print(error)
-                                    }
+                HStack{
+                    Image(systemName: "return.right")
+                        .onTapGesture {
+                            withAnimation(.default.speed(0.3)) {
+                                if show == ""{
+                                    show = "posts"
+                                } else {
+                                    show = ""
                                 }
                             }
-                            task.resume()
-                            
                         }
-                    }
+                        .imageScale(.large)
+                        .foregroundColor(.accentColor)
+                        .frame(height: 44)
+                        .padding()
+                    TextField("Cities", text: $vm.searchQuery).padding()
+                        .focused($nameIsFocused)
+                        .onReceive(
+                            vm.$searchQuery
+                                .debounce(for: .seconds(2), scheduler: DispatchQueue.main)
+                        ) {
+                            guard !$0.isEmpty else { return }
+                            /*if Auth.auth().currentUser == nil {
+                                Auth.auth().signInAnonymously()
+                            }*/
+                            print(">> searching for: \($0)")
+                            //performSearch(query: searchQuery)
+                            //print("searching \(vm.$searchQuery) s \($vm.searchQuery) v \(vm.searchQuery)")
+                            Task {
+                                let urlString = "https://api.mapbox.com/geocoding/v5/mapbox.places/\(vm.searchQuery.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!).json?limit=2&types=place&access_token=pk.eyJ1Ijoibmlja2NhcmR1Y2NpIiwiYSI6ImNrMWhyZ3ZqajBhcm8zY3BoMnVnbW02dXQifQ.aw4gJV_fsZ1GKDjaWPxemQ"
+                                let url = URL(string: urlString)!
+                                print("searching \(urlString)")
+                                //let (data, _) = try await URLSession.shared.data(from: url)
+                                
+                                let task = URLSession.shared.dataTask(with: url) { data, response, error in
+                                    //if error != nil { return print(error) }
+                                    let decoder = JSONDecoder()
+                                    decoder.dateDecodingStrategy = .iso8601
+                                    if let data = data{
+                                        do {
+                                           let place = try decoder.decode(Place.self, from: data)
+                                            print("found \(place)")
+                                            //place = try decoder.decode(Place.self, from: data)
+                                            print(place)
+                                            if place.features.count == 0 {return}
+                                            placename = place.features[0].placeName
+                                            latlng = CLLocationCoordinate2D(latitude: place.features[0].center[1], longitude: place.features[0].center[0])
+                                            print(latlng)
+                                            nameIsFocused = false
+                                            
+                                            let db = Firestore.firestore()
+
+                                            /*let geoFirestoreRef = db.collection("event")
+                                            let geoFirestore = GeoFirestore(collectionRef: geoFirestoreRef)
+                                            
+                                            let center = GeoPoint(latitude: place.features[0].center[1], longitude: place.features[0].center[0])
+                                            
+                                            let circleQuery = geoFirestore.query(withCenter: center, radius: 100.0)
+                                            let _ = circleQuery.observeReady {
+                                                print("All initial data has been loaded and events have been fired!")
+                                            }
+                                            let _ = circleQuery.observe(.documentEntered, with: { (key, location) in
+                                                geoFirestoreRef.document(key!).getDocument  { (document, error) in
+                                                    //if error != nil { return print(error ?? "missing permissions probably") }
+                                                               if let document = document, document.exists {
+                                                                   
+                                                                   let dataDescription = document.data().map(String.init(describing:)) ?? "nil"
+                                                                   print("Document data: \(dataDescription)")
+                                                                   let event = Event(id: document.documentID,
+                                                                                     title: document["title"] as? String ?? "",
+                                                                                     center: document["center"] as? Array<CLLocationDegrees> ?? [-74,43],
+                                                                                     url: "https://tpt.net.co/event/\(document.documentID)")
+                                                                   print(event)
+                                                                   let annotation = Annotation(coordinate: .init(latitude: event.center[0],
+                                                                                                                 longitude: event.center[1]), title: event.title, subtitle: event.url)
+                                                                   self.annotation = annotation
+                                                               } else {
+                                                                   print("Document does not exist.")
+                                                               }
+                                                           }
+                                            })*/
+                                            db.collection("event").whereField("collection", isEqualTo: "event").getDocuments() { (querySnapshot, error) in
+                                                            if let error = error {
+                                                                    print("Error getting documents: \(error)")
+                                                            } else {
+                                                                    if querySnapshot!.documents.isEmpty {
+                                                                        return print("is empty")
+                                                                    }
+                                                                    for document in querySnapshot!.documents {
+                                                                            //print("\(document.documentID): \(document.data())")
+                                                                        let event = Event(id: document.documentID,
+                                                                                          title: document["title"] as? String ?? "",
+                                                                                          center: document["center"] as? Array<CLLocationDegrees> ?? [-74,43],
+                                                                                          url: "https://tpt.net.co/event/\(document.documentID)")
+                                                                        print(event)
+                                                                        let annotation = Annotation(coordinate: .init(latitude: event.center[0],
+                                                                                                                      longitude: event.center[1]), title: event.title, subtitle: event.url)
+                                                                            /*.onLongPressGesture {
+                                                                                UIApplication.shared.open(URL(string: "https://tpt.net.co/event/\(document.documentID)")!
+                                                                            }*/
+                                                                        self.annotation = annotation
+                                                                    }
+                                                            }
+                                                    }
+                                            //latlng = [place?.features[0].center[0] ?? -74, place?.features[0].center[1] ?? 43]
+                                                let consumerSecret = "iAkWSqAXXAFLtxiFJYQJeqYpWcZDVUbt"
+                                                let urllString = "https://app.ticketmaster.com/discovery/v2/events.json?geoPoint=\(Geohash.encode(latitude:place.features[0].center[1], longitude:place.features[0].center[0], length:9))&classificationName=music&size=150&apikey=\(consumerSecret)"
+                                                let urll = URL(string: urllString)!
+                                                let task = URLSession.shared.dataTask(with: urll) { dataa, response, error in
+                                                    //let (dataa, _) = try await URLSession.shared.data(from: urll)
+                                                    if let dataa = dataa{
+                                                        do {
+                                                            let ticketmaster = try decoder.decode(Ticketmaster.self, from: dataa)
+                                                            //if ticketmaster?.Embedded.events.isEmpty! {
+                                                            print(ticketmaster)
+                                                            //if ticketmaster.Embedded.events.count == 0 {return}
+                                                            
+                                                            for event in ticketmaster.Embedded.events {
+                                                                let annotation = Annotation(coordinate: .init(latitude: Double(event.Embedded.venues[0].location.latitude)!,
+                                                                                                              longitude: Double(event.Embedded.venues[0].location.longitude)!), title: event.name, subtitle: event.url) //MKPointAnnotation
+                                                                    
+                                                                self.annotation = annotation
+                                                            }
+                                                            
+                                                        } catch {
+                                                            print(error)
+                                                        }
+                                                    }
+                                                }
+                                                task.resume()
+                                        } catch {
+                                            print(error)
+                                        }
+                                    }
+                                }
+                                task.resume()
+                                
+                            }
+                        }
+                        //.padding()
+                }
                 Spacer()
                 AddEvent(latlng: $latlng)
+
+                /*Text("location")
+                    .onTapGesture {
+                        let locManager = CLLocationManager()
+                        locManager.requestWhenInUseAuthorization()
+                        var currentLocation: CLLocation!
+
+                          currentLocation = locManager.location
+                        switch locManager.authorizationStatus {
+                        case .restricted, .denied:()
+                        default:
+                            latlng =//:Array<CLLocationDegrees> =
+                            CLLocationCoordinate2D(latitude: currentLocation.coordinate.latitude, longitude: currentLocation.coordinate.longitude)
+                        }
+                    }
+                .frame(height: 44)
+                .padding()*/
             }
+            VStack(alignment: .leading) {
+                HStack{
+                    Spacer()
+                
+                    Text("Read")
+                        .onTapGesture {
+                            withAnimation(.default.speed(0.3)) {
+                                
+                                rocks = []
+                                let db = Firestore.firestore()
+                                db.collection("forum").whereField("city", isEqualTo: placename).getDocuments() { (querySnapshot, error) in
+                                                if let error = error {
+                                                        print("Error getting documents: \(error)")
+                                                } else {
+                                                        if querySnapshot!.documents.isEmpty {
+                                                            return print("is empty")
+                                                        }
+                                                    
+                                                        for document in querySnapshot!.documents {
+                                                                //print("\(document.documentID): \(document.data())")
+                                                            let post = Post(id: document.documentID,
+                                                                            message: document["message"] as? String ?? "")
+                                                            //print(post)
+                                                            
+                                                            rocks.append(post)
+                                                            
+                                                        }
+                                                }
+                                        }
+                            }
+                        }
+                        .foregroundColor(.black)
+                        .padding(10)
+                }
+                GeometryReader { geometry in
+                    ScrollView {
+                        List {
+                            ForEach ($rocks.indices, id: \.self){ index in
+                                FirestoreSubView(show:$show,message:$rocks[index].message)
+                            }
+                        }
+                        .frame(width: geometry.size.width,
+                               height: geometry.size.height)
+                    }
+                    .frame(height: .infinity)
+                }
+                Image(systemName: "return.right")
+                    .onTapGesture {
+                        withAnimation(.default.speed(0.3)) {
+                            if show == ""{
+                                show = "posts"
+                            } else {
+                                show = ""
+                            }
+                        }
+                    }
+                    .imageScale(.large)
+                    .foregroundColor(.accentColor)
+                    .frame(height: 44)
+                    .padding()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .offset(x: show == "posts" ? 0 : UIScreen.screenWidth)
             /*HStack{
                 Image(systemName: "pencil.circle")
                     .imageScale(.large)
@@ -423,4 +574,5 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(FirestoreManager())
     }
 }
+
 
