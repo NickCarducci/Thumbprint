@@ -308,6 +308,7 @@ struct ContentView: View {
     }
     @StateObject private var vm = Search()
     @FocusState private var nameIsFocused: Bool
+    @State public var already: String = ""
     
     //@State public var showingAlert: String
     @State public var show: String = ""
@@ -348,6 +349,8 @@ struct ContentView: View {
                             /*if Auth.auth().currentUser == nil {
                                 Auth.auth().signInAnonymously()
                             }*/
+                            if already == vm.searchQuery { return }
+                            already = vm.searchQuery
                             print(">> searching for: \($0)")
                             //performSearch(query: searchQuery)
                             //print("searching \(vm.$searchQuery) s \($vm.searchQuery) v \(vm.searchQuery)")
@@ -442,7 +445,7 @@ struct ContentView: View {
                                                             
                                                             for event in ticketmaster.Embedded.events {
                                                                 let annotation = Annotation(coordinate: .init(latitude: Double(event.Embedded.venues[0].location.latitude)!,
-                                                                                                              longitude: Double(event.Embedded.venues[0].location.longitude)!), title: event.name, subtitle: event.url) //MKPointAnnotation
+                                                                        longitude: Double(event.Embedded.venues[0].location.longitude)!), title: event.name, subtitle: event.url) //MKPointAnnotation
                                                                     
                                                                 self.annotation = annotation
                                                             }
