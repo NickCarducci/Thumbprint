@@ -354,6 +354,8 @@ struct ContentView: View {
                             print(">> searching for: \($0)")
                             //performSearch(query: searchQuery)
                             //print("searching \(vm.$searchQuery) s \($vm.searchQuery) v \(vm.searchQuery)")
+                            let decoder = JSONDecoder()
+                            decoder.dateDecodingStrategy = .iso8601
                             Task {
                                 let urlString = "https://api.mapbox.com/geocoding/v5/mapbox.places/\(vm.searchQuery.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!).json?limit=2&types=place&access_token=pk.eyJ1Ijoibmlja2NhcmR1Y2NpIiwiYSI6ImNrMWhyZ3ZqajBhcm8zY3BoMnVnbW02dXQifQ.aw4gJV_fsZ1GKDjaWPxemQ"
                                 let url = URL(string: urlString)!
@@ -362,108 +364,106 @@ struct ContentView: View {
                                 
                                 let task = URLSession.shared.dataTask(with: url) { data, response, error in
                                     //if error != nil { return print(error) }
-                                    let decoder = JSONDecoder()
-                                    decoder.dateDecodingStrategy = .iso8601
                                     if let data = data{
                                         do {
                                            let place = try decoder.decode(Place.self, from: data)
                                             print("found \(place)")
                                             //place = try decoder.decode(Place.self, from: data)
-                                            print(place)
-                                            if place.features.count == 0 {return}
-                                            placename = place.features[0].placeName
-                                            latlng = CLLocationCoordinate2D(latitude: place.features[0].center[1], longitude: place.features[0].center[0])
-                                            print(latlng)
-                                            nameIsFocused = false
-                                            
-                                            let db = Firestore.firestore()
-
-                                            /*let geoFirestoreRef = db.collection("event")
-                                            let geoFirestore = GeoFirestore(collectionRef: geoFirestoreRef)
-                                            
-                                            let center = GeoPoint(latitude: place.features[0].center[1], longitude: place.features[0].center[0])
-                                            
-                                            let circleQuery = geoFirestore.query(withCenter: center, radius: 100.0)
-                                            let _ = circleQuery.observeReady {
-                                                print("All initial data has been loaded and events have been fired!")
+                                            //print(place)
+                                            DispatchQueue.main.async {
+                                                if place.features.count == 0 {return}
+                                                placename = place.features[0].placeName
+                                                latlng = CLLocationCoordinate2D(latitude: place.features[0].center[1], longitude: place.features[0].center[0])
+                                                nameIsFocused = false
                                             }
-                                            let _ = circleQuery.observe(.documentEntered, with: { (key, location) in
-                                                geoFirestoreRef.document(key!).getDocument  { (document, error) in
-                                                    //if error != nil { return print(error ?? "missing permissions probably") }
-                                                               if let document = document, document.exists {
-                                                                   
-                                                                   let dataDescription = document.data().map(String.init(describing:)) ?? "nil"
-                                                                   print("Document data: \(dataDescription)")
-                                                                   let event = Event(id: document.documentID,
-                                                                                     title: document["title"] as? String ?? "",
-                                                                                     center: document["center"] as? Array<CLLocationDegrees> ?? [-74,43],
-                                                                                     url: "https://tpt.net.co/event/\(document.documentID)")
-                                                                   print(event)
-                                                                   let annotation = Annotation(coordinate: .init(latitude: event.center[0],
-                                                                                                                 longitude: event.center[1]), title: event.title, subtitle: event.url)
-                                                                   self.annotation = annotation
-                                                               } else {
-                                                                   print("Document does not exist.")
-                                                               }
-                                                           }
-                                            })*/
-                                            db.collection("event").whereField("collection", isEqualTo: "event").getDocuments() { (querySnapshot, error) in
-                                                            if let error = error {
-                                                                    print("Error getting documents: \(error)")
-                                                            } else {
-                                                                    if querySnapshot!.documents.isEmpty {
-                                                                        return print("is empty")
-                                                                    }
-                                                                    for document in querySnapshot!.documents {
-                                                                            //print("\(document.documentID): \(document.data())")
-                                                                        let event = Event(id: document.documentID,
-                                                                                          title: document["title"] as? String ?? "",
-                                                                                          center: document["center"] as? Array<CLLocationDegrees> ?? [-74,43],
-                                                                                          url: "https://tpt.net.co/event/\(document.documentID)")
-                                                                        print(event)
-                                                                        let annotation = Annotation(coordinate: .init(latitude: event.center[0],
-                                                                                                                      longitude: event.center[1]), title: event.title, subtitle: event.url)
-                                                                            /*.onLongPressGesture {
-                                                                                UIApplication.shared.open(URL(string: "https://tpt.net.co/event/\(document.documentID)")!
-                                                                            }*/
-                                                                        self.annotation = annotation
-                                                                    }
-                                                            }
-                                                    }
-                                            //latlng = [place?.features[0].center[0] ?? -74, place?.features[0].center[1] ?? 43]
-                                                let consumerSecret = "iAkWSqAXXAFLtxiFJYQJeqYpWcZDVUbt"
-                                                let urllString = "https://app.ticketmaster.com/discovery/v2/events.json?geoPoint=\(Geohash.encode(latitude:place.features[0].center[1], longitude:place.features[0].center[0], length:9))&classificationName=music&size=150&apikey=\(consumerSecret)"
-                                                let urll = URL(string: urllString)!
-                                                let task = URLSession.shared.dataTask(with: urll) { dataa, response, error in
-                                                    //let (dataa, _) = try await URLSession.shared.data(from: urll)
-                                                    if let dataa = dataa{
-                                                        do {
-                                                            let ticketmaster = try decoder.decode(Ticketmaster.self, from: dataa)
-                                                            //if ticketmaster?.Embedded.events.isEmpty! {
-                                                            print(ticketmaster)
-                                                            //if ticketmaster.Embedded.events.count == 0 {return}
-                                                            
-                                                            for event in ticketmaster.Embedded.events {
-                                                                let annotation = Annotation(coordinate: .init(latitude: Double(event.Embedded.venues[0].location.latitude)!,
-                                                                        longitude: Double(event.Embedded.venues[0].location.longitude)!), title: event.name, subtitle: event.url) //MKPointAnnotation
-                                                                    
-                                                                self.annotation = annotation
-                                                            }
-                                                            
-                                                        } catch {
-                                                            print(error)
-                                                        }
-                                                    }
-                                                }
-                                                task.resume()
                                         } catch {
                                             print(error)
                                         }
                                     }
                                 }
                                 task.resume()
-                                
                             }
+                            
+                            let db = Firestore.firestore()
+
+                            /*let geoFirestoreRef = db.collection("event")
+                            let geoFirestore = GeoFirestore(collectionRef: geoFirestoreRef)
+                            
+                            let center = GeoPoint(latitude: place.features[0].center[1], longitude: place.features[0].center[0])
+                            
+                            let circleQuery = geoFirestore.query(withCenter: center, radius: 100.0)
+                            let _ = circleQuery.observeReady {
+                                print("All initial data has been loaded and events have been fired!")
+                            }
+                            let _ = circleQuery.observe(.documentEntered, with: { (key, location) in
+                                geoFirestoreRef.document(key!).getDocument  { (document, error) in
+                                    //if error != nil { return print(error ?? "missing permissions probably") }
+                                               if let document = document, document.exists {
+                                                   
+                                                   let dataDescription = document.data().map(String.init(describing:)) ?? "nil"
+                                                   print("Document data: \(dataDescription)")
+                                                   let event = Event(id: document.documentID,
+                                                                     title: document["title"] as? String ?? "",
+                                                                     center: document["center"] as? Array<CLLocationDegrees> ?? [-74,43],
+                                                                     url: "https://tpt.net.co/event/\(document.documentID)")
+                                                   print(event)
+                                                   let annotation = Annotation(coordinate: .init(latitude: event.center[0],
+                                                                                                 longitude: event.center[1]), title: event.title, subtitle: event.url)
+                                                   self.annotation = annotation
+                                               } else {
+                                                   print("Document does not exist.")
+                                               }
+                                           }
+                            })*/
+                            db.collection("event").whereField("collection", isEqualTo: "event").getDocuments() { (querySnapshot, error) in
+                                            if let error = error {
+                                                    print("Error getting documents: \(error)")
+                                            } else {
+                                                    if querySnapshot!.documents.isEmpty {
+                                                        return print("is empty")
+                                                    }
+                                                    for document in querySnapshot!.documents {
+                                                            //print("\(document.documentID): \(document.data())")
+                                                        let event = Event(id: document.documentID,
+                                                                          title: document["title"] as? String ?? "",
+                                                                          center: document["center"] as? Array<CLLocationDegrees> ?? [-74,43],
+                                                                          url: "https://tpt.net.co/event/\(document.documentID)")
+                                                        print(event)
+                                                        let annotation = Annotation(coordinate: .init(latitude: event.center[0],
+                                                                                                      longitude: event.center[1]), title: event.title, subtitle: event.url)
+                                                            /*.onLongPressGesture {
+                                                                UIApplication.shared.open(URL(string: "https://tpt.net.co/event/\(document.documentID)")!
+                                                            }*/
+                                                        self.annotation = annotation
+                                                    }
+                                            }
+                                    }
+                            //latlng = [place?.features[0].center[0] ?? -74, place?.features[0].center[1] ?? 43]
+                                let consumerSecret = "iAkWSqAXXAFLtxiFJYQJeqYpWcZDVUbt"
+                                let urllString = "https://app.ticketmaster.com/discovery/v2/events.json?geoPoint=\(Geohash.encode(latitude:(place?.features[0].center[1]) ?? 0, longitude:(place?.features[0].center[0]) ?? 0, length:9))&classificationName=music&size=150&apikey=\(consumerSecret)"
+                                let urll = URL(string: urllString)!
+                                let task = URLSession.shared.dataTask(with: urll) { dataa, response, error in
+                                    //let (dataa, _) = try await URLSession.shared.data(from: urll)
+                                    if let dataa = dataa{
+                                        do {
+                                            let ticketmaster = try decoder.decode(Ticketmaster.self, from: dataa)
+                                            //if ticketmaster?.Embedded.events.isEmpty! {
+                                            print(ticketmaster)
+                                            //if ticketmaster.Embedded.events.count == 0 {return}
+                                            
+                                            for event in ticketmaster.Embedded.events {
+                                                let annotation = Annotation(coordinate: .init(latitude: Double(event.Embedded.venues[0].location.latitude)!,
+                                                        longitude: Double(event.Embedded.venues[0].location.longitude)!), title: event.name, subtitle: event.url) //MKPointAnnotation
+                                                    
+                                                self.annotation = annotation
+                                            }
+                                            
+                                        } catch {
+                                            print(error)
+                                        }
+                                    }
+                                }
+                                task.resume()
                         }
                         //.padding()
                 }

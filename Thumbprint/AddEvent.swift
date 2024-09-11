@@ -171,7 +171,10 @@ struct NewEvent: View {
                                             let loc = Loc(center: [location.center[1],location.center[0]],placeName:location.placeName)
                                             //print(post)
                                             
-                                            locations.append(loc)
+                                            DispatchQueue.main.async {
+                                            //await MainActor.run {
+                                                locations.append(loc)
+                                            }
                                             
                                         }
                                     } catch {
@@ -271,7 +274,9 @@ struct NewEvent: View {
                                                 let img = Img(url: image.src.original)
                                                 //print(post)
                                                 
-                                                images.append(img)
+                                                DispatchQueue.main.async {
+                                                    images.append(img)
+                                                }
                                                 
                                             }
                                         } catch {
